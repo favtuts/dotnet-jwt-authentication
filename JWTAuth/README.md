@@ -25,3 +25,7 @@ Install-Package Microsoft.AspNetCore.Authentication.JwtBearer
 * Add an interface to the `Interface` folder, name it as [IEmployees.cs](./JWTAuth.WebApi/Interface/IEmployees.cs)
 * Add a class name as [EmployeeRepository.cs](./JWTAuth.WebApi/Repository/EmployeeRepository.cs) to the `Repository` folder, which will inherit `IEmployees` interface
 * Regirster `DatabaseContext` and `IEmployees` to the container in the [Program.cs](JWTAuth.WebApi/Program.cs) file
+
+# Adding the Web API Controller to the Application
+
+* Aut the controller class name as [EmployeeController.cs](JWTAuth.WebApi/Controllers/EmployeeController.cs)
