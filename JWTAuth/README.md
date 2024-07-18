@@ -102,3 +102,92 @@ Delete an Employee
 curl --location --request DELETE 'https://localhost:7104/api/employee/11' \
 --header 'accept: text/plain'
 ```
+
+# Adding the Token to the Application
+
+* Aut the controller class name as [TokenController.cs](JWTAuth.WebApi/Controllers/TokenController.cs)
+
+# Test APIs are secured by the JWT with Postman
+
+First get token:
+```bash
+curl --location 'https://localhost:7104/api/token' \
+--header 'accept: text/plain' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "email": "admin@abc.com",
+    "password": "$admin@2022"
+}'
+```
+
+Then append `Authorization` header with Bearer token:
+```bash
+curl --location 'https://localhost:7104/api/employee' \
+--header 'accept: text/plain' \
+--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJKV1RTZXJ2aWNlQWNjZXNzVG9rZW4iLCJqdGkiOiI3YTEwNjk3MS04MTExLTQxZGItYTU4Zi03YTYzMDhlYzc1NTkiLCJpYXQiOiIxNzIxMjk5OTYzIiwiVXNlcklkIjoiMSIsIkRpc3BsYXlOYW1lIjoiQW1pdCBNb2hhbnR5IiwiVXNlck5hbWUiOiJBZG1pbiIsIkVtYWlsIjoiYWRtaW5AYWJjLmNvbSIsImV4cCI6MTcyMTMwMDU2MywiaXNzIjoiSldUQXV0aGVudGljYXRpb25TZXJ2ZXIiLCJhdWQiOiJKV1RTZXJ2aWNlUG9zdG1hbkNsaWVudCJ9.1_2iw1mFSztyVJNQFZXe8Cz0khiSN2eGDRB-T8iP6-Q'
+
+
+[
+    {
+        "employeeID": 1,
+        "nationalIDNumber": "295847284",
+        "employeeName": "Michael Westover",
+        "loginID": "adventure-works\\ken0",
+        "jobTitle": "Vice President of Sales",
+        "birthDate": "1969-01-29T00:00:00",
+        "maritalStatus": "S",
+        "gender": "M",
+        "hireDate": "2009-01-14T00:00:00",
+        "vacationHours": 99,
+        "sickLeaveHours": 69,
+        "rowGuid": "f01251e5-96a3-448d-981e-0f99d789110d",
+        "modifiedDate": "2014-06-30T00:00:00"
+    },
+    {
+        "employeeID": 2,
+        "nationalIDNumber": "245797967",
+        "employeeName": "Raeann Santos",
+        "loginID": "adventure-works\\terri0",
+        "jobTitle": "Vice President of Engineering",
+        "birthDate": "1971-08-01T00:00:00",
+        "maritalStatus": "S",
+        "gender": "F",
+        "hireDate": "2008-01-31T00:00:00",
+        "vacationHours": 1,
+        "sickLeaveHours": 20,
+        "rowGuid": "45e8f437-670d-4409-93cb-f9424a40d6ee",
+        "modifiedDate": "2014-06-30T00:00:00"
+    },
+    {
+        "employeeID": 3,
+        "nationalIDNumber": "509647174",
+        "employeeName": "Pamela Wambsgans",
+        "loginID": "adventure-works\\roberto0",
+        "jobTitle": "Engineering Manager",
+        "birthDate": "1974-11-12T00:00:00",
+        "maritalStatus": "M",
+        "gender": "M",
+        "hireDate": "2007-11-11T00:00:00",
+        "vacationHours": 2,
+        "sickLeaveHours": 21,
+        "rowGuid": "9bbbfb2c-efbb-4217-9ab7-f97689328841",
+        "modifiedDate": "2014-06-30T00:00:00"
+    }
+]
+```
+
+
+# Fix: ASP.NET core JWT authentication always throwing 401 unauthorized
+
+* Issue 1: The "iat (issued at)" is not correct.(https://github.com/dotnet/aspnetcore/issues/52286)
+
+Certainly! When upgrading from .NET 6 to .NET 8, I encountered an issue related to setting the "issued at" (iat) claim. Initially, I was using `DateTime.UtcNow.ToString()`, but I switched to `DateTimeOffset.Now.ToUnixTimeSeconds().ToString()` to address the issue. 🚀🕰️
+
+* Issue 2: Need to add  JwtBearerOptions.UseSecurityTokenValidators to true (https://stackoverflow.com/questions/77515249/custom-token-validator-not-working-in-net-8)
+
+According to Microsoft docs in here the easiest way to fix this is to set
+```
+UseSecurityTokenValidators = true;
+```
+
+* Need to append the Log Request Headers Middleware for debuging (https://ardalis.com/log-request-headers-middleware/)

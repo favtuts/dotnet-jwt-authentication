@@ -1,4 +1,5 @@
 using JWTAuth.WebApi.Interface;
+using JWTAuth.WebApi.Middleware;
 using JWTAuth.WebApi.Models;
 using JWTAuth.WebApi.Repository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -19,6 +20,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 {
     options.RequireHttpsMetadata = false;
     options.SaveToken = true;
+    options.UseSecurityTokenValidators = true;
     options.TokenValidationParameters = new TokenValidationParameters()
     {
         ValidateIssuer = true,
@@ -40,6 +42,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+app.UseLogHeaders(); // add here right after you create app
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
