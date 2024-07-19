@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.35027.167
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TokenDemo.Web", "TokenDemo.Web\TokenDemo.Web.csproj", "{D7B93EAB-7E41-4C78-BC7E-0F13A135E451}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D7B93EAB-7E41-4C78-BC7E-0F13A135E451}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D7B93EAB-7E41-4C78-BC7E-0F13A135E451}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D7B93EAB-7E41-4C78-BC7E-0F13A135E451}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D7B93EAB-7E41-4C78-BC7E-0F13A135E451}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {8BD7250A-7F18-4E38-B6BA-C19617ED2201}
+	EndGlobalSection
+EndGlobal
