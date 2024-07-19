@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using UsingIdentity.Areas.Identity.Data;
 
 namespace UsingIdentity.Data;
 
-public class UsingIdentityContext : IdentityDbContext<IdentityUser>
+public class UsingIdentityContext : IdentityDbContext<UsingIdentityUser>
 {
     public UsingIdentityContext(DbContextOptions<UsingIdentityContext> options)
         : base(options)
