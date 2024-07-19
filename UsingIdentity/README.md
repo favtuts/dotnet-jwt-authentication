@@ -161,3 +161,9 @@ Microsoft.EntityFrameworkCore.Database.Command[20101]
       VALUES (N'20240719034135_First-Create', N'8.0.7');
 Done.
 ```
+
+# Customize Application
+
+* Add [nested layout](./UsingIdentity/Areas/Identity/Pages/_Layout.cshtml) for tab control headers
+* Update some styles into [site.css](./UsingIdentity/wwwroot/css/site.css)
+* Update [Login page](./UsingIdentity/Areas/Identity/Pages/Account/Login.cshtml) and [Register page](./UsingIdentity/Areas/Identity/Pages/Account/Register.cshtml) with our new layout

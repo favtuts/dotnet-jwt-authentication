@@ -1,12 +1,13 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using UsingIdentity.Areas.Identity.Data;
 using UsingIdentity.Data;
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("UsingIdentityContextConnection") ?? throw new InvalidOperationException("Connection string 'UsingIdentityContextConnection' not found.");
 
 builder.Services.AddDbContext<UsingIdentityContext>(options => options.UseSqlServer(connectionString));
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<UsingIdentityContext>();
+builder.Services.AddDefaultIdentity<UsingIdentityUser>(options => options.SignIn.RequireConfirmedAccount = false).AddEntityFrameworkStores<UsingIdentityContext>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -36,6 +37,6 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-app.MapRazorPages();
+app.MapRazorPages(); // Add support to the Razor pages
 
 app.Run();
