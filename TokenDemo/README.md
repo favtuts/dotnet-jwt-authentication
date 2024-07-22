@@ -114,3 +114,14 @@ Call Login API from Postman to get the Access Token and Refresh Token
 
 Decode our Access Token on the site: https://kwt.io
 ![decode_access_token](./images/NetCore-JWT-Open-Jwt-Token-Details.png)
+
+
+# Implement the Refresh Token functionality
+
+The below diagram shows a way to implement the refresh token functionality:
+
+![refresh_Token_flow](./images/NetCore-JWT-Refresh-Token-Flow.jpg)
+
+
+* Update [IdentityService.cs](./TokenDemo.Web/Services/IdentityService.cs) for the refresh token.
+* Update [AuthController.cs](./TokenDemo.Web/Controllers/AuthController.cs) for refresh API
