@@ -1,6 +1,6 @@
 USE [master]
 GO
-/****** Object:  Database [TokeDemoDB]    Script Date: 7/22/2024 8:54:52 AM ******/
+/****** Object:  Database [TokeDemoDB]    Script Date: 7/22/2024 4:13:30 PM ******/
 CREATE DATABASE [TokeDemoDB]
  CONTAINMENT = NONE
  ON  PRIMARY 
@@ -82,15 +82,15 @@ ALTER DATABASE [TokeDemoDB] SET QUERY_STORE (OPERATION_MODE = READ_WRITE, CLEANU
 GO
 USE [TokeDemoDB]
 GO
-/****** Object:  Table [dbo].[RefreshToken]    Script Date: 7/22/2024 8:54:53 AM ******/
+/****** Object:  Table [dbo].[RefreshToken]    Script Date: 7/22/2024 4:13:30 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[RefreshToken](
-	[RefreshTokenId] [bigint] NOT NULL,
+	[RefreshTokenId] [bigint] IDENTITY(1,1) NOT NULL,
 	[Token] [nvarchar](max) NOT NULL,
-	[Jwt] [nvarchar](max) NOT NULL,
+	[JwtId] [nvarchar](max) NOT NULL,
 	[CreationDate] [datetime2](7) NOT NULL,
 	[ExpiryDate] [datetime2](7) NOT NULL,
 	[Used] [bit] NULL,
@@ -101,13 +101,13 @@ CREATE TABLE [dbo].[RefreshToken](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[RolesMaster]    Script Date: 7/22/2024 8:54:53 AM ******/
+/****** Object:  Table [dbo].[RolesMaster]    Script Date: 7/22/2024 4:13:30 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[RolesMaster](
-	[RoleId] [bigint] NOT NULL,
+	[RoleId] [bigint] IDENTITY(1,1) NOT NULL,
 	[RoleName] [nvarchar](256) NOT NULL,
 	[CreatedOn] [datetime2](7) NOT NULL,
 	[UpdatedOn] [datetime2](7) NOT NULL,
@@ -117,13 +117,28 @@ CREATE TABLE [dbo].[RolesMaster](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[UserMaster]    Script Date: 7/22/2024 8:54:53 AM ******/
+/****** Object:  Table [dbo].[UserRoles]    Script Date: 7/22/2024 4:13:30 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE TABLE [dbo].[UserMaster](
+CREATE TABLE [dbo].[UserRoles](
+	[UserRoleId] [bigint] IDENTITY(1,1) NOT NULL,
 	[UserId] [bigint] NOT NULL,
+	[RoleId] [bigint] NOT NULL,
+ CONSTRAINT [PK_UserRoles] PRIMARY KEY CLUSTERED 
+(
+	[UserRoleId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[UsersMaster]    Script Date: 7/22/2024 4:13:30 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[UsersMaster](
+	[UserId] [bigint] IDENTITY(1,1) NOT NULL,
 	[FirstName] [nvarchar](256) NOT NULL,
 	[LastName] [nvarchar](256) NOT NULL,
 	[UserName] [nvarchar](256) NOT NULL,
@@ -138,35 +153,54 @@ CREATE TABLE [dbo].[UserMaster](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[UserRoles]    Script Date: 7/22/2024 8:54:53 AM ******/
-SET ANSI_NULLS ON
+SET IDENTITY_INSERT [dbo].[RolesMaster] ON 
 GO
-SET QUOTED_IDENTIFIER ON
+INSERT [dbo].[RolesMaster] ([RoleId], [RoleName], [CreatedOn], [UpdatedOn]) VALUES (1, N'Admin', CAST(N'2024-07-22T10:55:07.5533333' AS DateTime2), CAST(N'2024-07-22T10:55:07.5533333' AS DateTime2))
 GO
-CREATE TABLE [dbo].[UserRoles](
-	[UserId] [bigint] NOT NULL,
-	[RoleId] [bigint] NOT NULL,
- CONSTRAINT [PK_UserRoles] PRIMARY KEY CLUSTERED 
-(
-	[UserId] ASC,
-	[RoleId] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
+INSERT [dbo].[RolesMaster] ([RoleId], [RoleName], [CreatedOn], [UpdatedOn]) VALUES (2, N'Staff', CAST(N'2024-07-22T11:19:28.7366667' AS DateTime2), CAST(N'2024-07-22T11:19:28.7366667' AS DateTime2))
 GO
-ALTER TABLE [dbo].[RefreshToken]  WITH CHECK ADD  CONSTRAINT [FK_RefreshToken_UserMaster] FOREIGN KEY([UserId])
-REFERENCES [dbo].[UserMaster] ([UserId])
+SET IDENTITY_INSERT [dbo].[RolesMaster] OFF
 GO
-ALTER TABLE [dbo].[RefreshToken] CHECK CONSTRAINT [FK_RefreshToken_UserMaster]
+SET IDENTITY_INSERT [dbo].[UserRoles] ON 
+GO
+INSERT [dbo].[UserRoles] ([UserRoleId], [UserId], [RoleId]) VALUES (1, 1, 1)
+GO
+INSERT [dbo].[UserRoles] ([UserRoleId], [UserId], [RoleId]) VALUES (2, 1, 2)
+GO
+INSERT [dbo].[UserRoles] ([UserRoleId], [UserId], [RoleId]) VALUES (3, 2, 2)
+GO
+SET IDENTITY_INSERT [dbo].[UserRoles] OFF
+GO
+SET IDENTITY_INSERT [dbo].[UsersMaster] ON 
+GO
+INSERT [dbo].[UsersMaster] ([UserId], [FirstName], [LastName], [UserName], [Password], [Email], [PhoneNumber], [CreatedOn], [UpdatedOn]) VALUES (1, N'Thuan', N'Tran', N'thuantv', N'abcd1234', N'tvt.iot@gmail.com', N'84984576803', CAST(N'2024-07-22T11:18:08.0200000' AS DateTime2), CAST(N'2024-07-22T11:18:08.0200000' AS DateTime2))
+GO
+INSERT [dbo].[UsersMaster] ([UserId], [FirstName], [LastName], [UserName], [Password], [Email], [PhoneNumber], [CreatedOn], [UpdatedOn]) VALUES (2, N'Hung', N'Tran', N'shanetran', N'abcd1234', N'shanevt@gmail.com', N'84941198368', CAST(N'2024-07-22T11:19:00.6600000' AS DateTime2), CAST(N'2024-07-22T11:19:00.6600000' AS DateTime2))
+GO
+SET IDENTITY_INSERT [dbo].[UsersMaster] OFF
+GO
+ALTER TABLE [dbo].[RolesMaster] ADD  CONSTRAINT [DF_RolesMaster_CreatedOn]  DEFAULT (getdate()) FOR [CreatedOn]
+GO
+ALTER TABLE [dbo].[RolesMaster] ADD  CONSTRAINT [DF_RolesMaster_UpdatedOn]  DEFAULT (getdate()) FOR [UpdatedOn]
+GO
+ALTER TABLE [dbo].[UsersMaster] ADD  CONSTRAINT [DF_UserMaster_CreatedOn]  DEFAULT (getdate()) FOR [CreatedOn]
+GO
+ALTER TABLE [dbo].[UsersMaster] ADD  CONSTRAINT [DF_UserMaster_UpdatedOn]  DEFAULT (getdate()) FOR [UpdatedOn]
+GO
+ALTER TABLE [dbo].[RefreshToken]  WITH CHECK ADD  CONSTRAINT [FK_RefreshToken_UsersMaster] FOREIGN KEY([UserId])
+REFERENCES [dbo].[UsersMaster] ([UserId])
+GO
+ALTER TABLE [dbo].[RefreshToken] CHECK CONSTRAINT [FK_RefreshToken_UsersMaster]
 GO
 ALTER TABLE [dbo].[UserRoles]  WITH CHECK ADD  CONSTRAINT [FK_UserRoles_RolesMaster] FOREIGN KEY([RoleId])
 REFERENCES [dbo].[RolesMaster] ([RoleId])
 GO
 ALTER TABLE [dbo].[UserRoles] CHECK CONSTRAINT [FK_UserRoles_RolesMaster]
 GO
-ALTER TABLE [dbo].[UserRoles]  WITH CHECK ADD  CONSTRAINT [FK_UserRoles_UserMaster] FOREIGN KEY([UserId])
-REFERENCES [dbo].[UserMaster] ([UserId])
+ALTER TABLE [dbo].[UserRoles]  WITH CHECK ADD  CONSTRAINT [FK_UserRoles_UsersMaster] FOREIGN KEY([UserId])
+REFERENCES [dbo].[UsersMaster] ([UserId])
 GO
-ALTER TABLE [dbo].[UserRoles] CHECK CONSTRAINT [FK_UserRoles_UserMaster]
+ALTER TABLE [dbo].[UserRoles] CHECK CONSTRAINT [FK_UserRoles_UsersMaster]
 GO
 USE [master]
 GO

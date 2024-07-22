@@ -9,7 +9,7 @@ public partial class RefreshToken
 
     public string Token { get; set; } = null!;
 
-    public string Jwt { get; set; } = null!;
+    public string JwtId { get; set; } = null!;
 
     public DateTime CreationDate { get; set; }
 
@@ -19,5 +19,5 @@ public partial class RefreshToken
 
     public long UserId { get; set; }
 
-    public virtual UserMaster User { get; set; } = null!;
+    public virtual UsersMaster User { get; set; } = null!;
 }

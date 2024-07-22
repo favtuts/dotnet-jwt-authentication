@@ -19,11 +19,17 @@ public partial class DemoTokenContext : DbContext
 
     public virtual DbSet<RolesMaster> RolesMasters { get; set; }
 
-    public virtual DbSet<UserMaster> UserMasters { get; set; }
+    public virtual DbSet<UserRole> UserRoles { get; set; }
+
+    public virtual DbSet<UsersMaster> UsersMasters { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=.\\SQLEXPRESS;Database=TokeDemoDB;Trusted_Connection=True;Persist Security Info=False;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30;");
+    {
+        if (!optionsBuilder.IsConfigured)
+        {
+            optionsBuilder.UseSqlServer("Server=.\\SQLEXPRESS;Database=TokeDemoDB;Trusted_Connection=True;Persist Security Info=False;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30;");
+        }
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -31,12 +37,10 @@ public partial class DemoTokenContext : DbContext
         {
             entity.ToTable("RefreshToken");
 
-            entity.Property(e => e.RefreshTokenId).ValueGeneratedNever();
-
             entity.HasOne(d => d.User).WithMany(p => p.RefreshTokens)
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_RefreshToken_UserMaster");
+                .HasConstraintName("FK_RefreshToken_UsersMaster");
         });
 
         modelBuilder.Entity<RolesMaster>(entity =>
@@ -45,38 +49,36 @@ public partial class DemoTokenContext : DbContext
 
             entity.ToTable("RolesMaster");
 
-            entity.Property(e => e.RoleId).ValueGeneratedNever();
+            entity.Property(e => e.CreatedOn).HasDefaultValueSql("(getdate())");
             entity.Property(e => e.RoleName).HasMaxLength(256);
+            entity.Property(e => e.UpdatedOn).HasDefaultValueSql("(getdate())");
         });
 
-        modelBuilder.Entity<UserMaster>(entity =>
+        modelBuilder.Entity<UserRole>(entity =>
         {
-            entity.HasKey(e => e.UserId);
+            entity.HasOne(d => d.Role).WithMany(p => p.UserRoles)
+                .HasForeignKey(d => d.RoleId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_UserRoles_RolesMaster");
 
-            entity.ToTable("UserMaster");
+            entity.HasOne(d => d.User).WithMany(p => p.UserRoles)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_UserRoles_UsersMaster");
+        });
 
-            entity.Property(e => e.UserId).ValueGeneratedNever();
+        modelBuilder.Entity<UsersMaster>(entity =>
+        {
+            entity.HasKey(e => e.UserId).HasName("PK_UserMaster");
+
+            entity.ToTable("UsersMaster");
+
+            entity.Property(e => e.CreatedOn).HasDefaultValueSql("(getdate())");
             entity.Property(e => e.Email).HasMaxLength(256);
             entity.Property(e => e.FirstName).HasMaxLength(256);
             entity.Property(e => e.LastName).HasMaxLength(256);
+            entity.Property(e => e.UpdatedOn).HasDefaultValueSql("(getdate())");
             entity.Property(e => e.UserName).HasMaxLength(256);
-
-            entity.HasMany(d => d.Roles).WithMany(p => p.Users)
-                .UsingEntity<Dictionary<string, object>>(
-                    "UserRole",
-                    r => r.HasOne<RolesMaster>().WithMany()
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
-                        .HasConstraintName("FK_UserRoles_RolesMaster"),
-                    l => l.HasOne<UserMaster>().WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
-                        .HasConstraintName("FK_UserRoles_UserMaster"),
-                    j =>
-                    {
-                        j.HasKey("UserId", "RoleId");
-                        j.ToTable("UserRoles");
-                    });
         });
 
         OnModelCreatingPartial(modelBuilder);

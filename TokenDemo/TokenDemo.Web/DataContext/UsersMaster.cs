@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace TokenDemo.Web.DataContext;
 
-public partial class UserMaster
+public partial class UsersMaster
 {
     public long UserId { get; set; }
 
@@ -25,5 +25,5 @@ public partial class UserMaster
 
     public virtual ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
 
-    public virtual ICollection<RolesMaster> Roles { get; set; } = new List<RolesMaster>();
+    public virtual ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
 }

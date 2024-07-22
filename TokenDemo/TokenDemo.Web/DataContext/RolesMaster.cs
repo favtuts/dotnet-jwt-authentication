@@ -13,5 +13,5 @@ public partial class RolesMaster
 
     public DateTime UpdatedOn { get; set; }
 
-    public virtual ICollection<UserMaster> Users { get; set; } = new List<UserMaster>();
+    public virtual ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
 }
