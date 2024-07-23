@@ -187,4 +187,132 @@ Done.
 ```
 
 Using Visual Studio Server Explorer to open the Database
+
 ![vs_localdb](./images/JWT-Net-Connect-LocalDB.png)
+
+You can also using SSMS (SQL Server Mamanagement Studio) to connect to LocalDB
+
+![esms_localdb](./images/JWT-Net-SSMS-LocalDB.png)
+
+You can see that the tables below are created inside the database
+
+![tables_localdb](./images/JWT-Net-SSMS-ObjectExplorer.png)
+
+
+# Authorize the WeatherForecast API
+
+Add “Authorize” attribute inside the [WeatherForecast controller](JWTIdendity.WebAPI/Controllers/WeatherForecastController.cs).
+
+```csharp
+    [Authorize]
+    [ApiController]
+    [Route("api/[controller]")]
+    public class WeatherForecastController : ControllerBase
+```
+
+We can run the application and try to access get method in weatherforecast controller. We have received a `401 unauthorized` error.
+
+![401_unauthorized](./images/JWT-Net-WeatherForecast-401-Unauthorized.png)
+
+# Register normal user
+
+```bash
+curl --location 'https://localhost:7214/api/Authenticate/register' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "username": "favtuts",
+    "email": "favtuts@gmail.com",
+    "password": "Password@1234"
+}'
+```
+
+![register_user](./images/JWT-Net-Register-User-Postman.png)
+
+# Get JWT token
+
+Login with registered credentials
+```bash
+curl --location 'https://localhost:7214/api/Authenticate/login' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "username": "favtuts",    
+    "password": "Password@1234"
+}'
+```
+
+![login_credentials](./images/JWT-Net-Login-Credentials-Postman.png)
+
+We have the Access Token which is decoded on tool: https://jwt.io/
+![decode_jwt_token](./images/JWT-Net-AccessToken-Decode.png)
+
+# Bearer token inside the authorization
+
+```bash
+curl --location 'https://localhost:7214/api/WeatherForecast' \
+--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiZmF2dHV0cyIsImp0aSI6ImI1M2QyNjgxLTJkOWEtNDI2Mi05ZGYwLTNjNWQxY2ZlZGY0ZSIsImV4cCI6MTcyMTc1OTcxNiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo1MDAwIiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDo0MjAwIn0.Julc1zOq7wrQCQuE-fwLlYVavj_xDtm35JJNvdblEhw'
+```
+
+![bearer_authorization](./images/JWT-Net-WeatherForecast-Bearer-Authorization.png)
+
+# Role-based Authorization
+
+We change the Authorize annotation
+```csharp
+    [Authorize(Roles = UserRoles.Admin)]
+    [ApiController]
+    [Route("api/[controller]")]
+    public class WeatherForecastController : ControllerBase
+```
+
+We can try to access the weatherforecast controller with same token again in Postman tool. 
+We have received a 403 forbidden error instead of 401 now. 
+
+![bearer_authorization](./images/JWT-Net-WeatherForecast-403-Forbidden.png)
+
+Even though we are passing a valid token we don’t have sufficient privilege to access the controller. To access this controller, the user must have an admin role permission. Current user is a normal user and does not have any admin role permission. 
+
+
+# Register normal user
+
+```bash
+curl --location 'https://localhost:7214/api/Authenticate/register-admin' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "username": "favtuts-admin",
+    "email": "favtuts-admin@gmail.com",
+    "password": "Password@1234"
+}'
+```
+
+![register_user_admin](./images/JWT-Net-Register-Admin-Postman.png)
+
+
+# Get JWT token with Admin user
+
+```bash
+curl --location 'https://localhost:7214/api/Authenticate/login' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "username": "favtuts-admin",    
+    "password": "Password@1234"
+}'
+```
+
+![login_admin](./images/JWT-Net-Login-Admin-Postman.png)
+
+If you decode the token, you can see that the roles are added to the token.
+![decode_jwt_admin_role](./images/JWT-Net-AccessToken-Decode-Admin-Role.png)
+
+
+# Role-based Authorization
+
+We can use this new token instead of the old token to access the weatherforecast controller. 
+
+```bash
+curl --location 'https://localhost:7214/api/WeatherForecast' \
+--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiZmF2dHV0cy1hZG1pbiIsImp0aSI6IjNmZWE0NjRiLWQ5MGYtNDQ1My1iNjY5LWY0YjRlNTJjYTk1MiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6WyJVc2VyIiwiQWRtaW4iXSwiZXhwIjoxNzIxNzYxNDAwLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjUwMDAiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjQyMDAifQ.u_FcvDF-nJIqvJKiGcKLu1ukvFnlloD2nDSn1-ZloyU'
+```
+
+![role_authorization](./images/JWT-Net-WeatherForecast-Role-Based-Authorization.png)
+
+Now we have successfully fetched the data from weatherforecast controller.
