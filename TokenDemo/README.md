@@ -134,3 +134,5 @@ The below diagram shows a way to implement the refresh token functionality:
 
 Test the API getCurrentUser using Postman
 ![using_access_token](./images/NetCore-JWT-Using-AccessToken.png)
+
+

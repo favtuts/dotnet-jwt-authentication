@@ -47,6 +47,13 @@ services.AddAuthentication(x =>
 });
 
 
+services.AddCors(options =>
+{
+    options.AddPolicy("CorsPolicy", 
+        builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()
+        );
+});
+
 // configure Application services
 services.AddTransient<IIdentityService, IdentityService>();
 services.AddTransient<IUserService, UserService>();
@@ -68,6 +75,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors("CorsPolicy");
 
 app.UseAuthentication();
 app.UseAuthorization();
