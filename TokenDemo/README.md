@@ -125,3 +125,12 @@ The below diagram shows a way to implement the refresh token functionality:
 
 * Update [IdentityService.cs](./TokenDemo.Web/Services/IdentityService.cs) for the refresh token.
 * Update [AuthController.cs](./TokenDemo.Web/Controllers/AuthController.cs) for refresh API
+
+
+# Get user information using the Access Token
+
+* Add the [UserService.cs](./TokenDemo.Web/Services/UserService.cs) files in the Services folder.
+* Add the [UsersController.cs](./TokenDemo.Web/Controllers/UsersController.cs) files in the Controllers folder
+
+Test the API getCurrentUser using Postman
+![using_access_token](./images/NetCore-JWT-Using-AccessToken.png)

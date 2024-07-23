@@ -49,6 +49,7 @@ services.AddAuthentication(x =>
 
 // configure Application services
 services.AddTransient<IIdentityService, IdentityService>();
+services.AddTransient<IUserService, UserService>();
 
 //builder.Services.AddMvc();
 builder.Services.AddControllers();
